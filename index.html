@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Apex Ledger</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0c0f'/%3E%3Cpath d='M18 45 31 15h8l13 30h-9l-2-6H29l-2 6z' fill='%23d6b46a'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="page-backdrop" aria-hidden="true">
+      <img src="assets/hero-race.jpg" alt="">
+    </div>
+
+    <div class="shell">
+      <header class="topbar">
+        <a class="brand" href="#dashboard" aria-label="Apex Ledger dashboard">
+          <span class="brand-mark">A</span>
+          <span>
+            <strong>Apex Ledger</strong>
+            <small>Private Formula 1 race book</small>
+          </span>
+        </a>
+
+        <nav class="nav" aria-label="Primary">
+          <a href="#dashboard" data-route-link="dashboard">Dashboard</a>
+          <a href="#races" data-route-link="races">Races</a>
+          <a href="#entry" data-route-link="entry">Entry</a>
+          <a href="#wallet" data-route-link="wallet">Wallet</a>
+          <a href="#rules" data-route-link="rules">Rules</a>
+          <a href="#legal" data-route-link="legal">Legal</a>
+        </nav>
+
+        <button class="auth-chip auth-icon-button" id="authToggle" type="button" aria-label="Open account">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 12c2.76 0 5-2.46 5-5.5S14.76 1 12 1 7 3.46 7 6.5 9.24 12 12 12Zm0 2c-4.42 0-8 2.69-8 6v2h16v-2c0-3.31-3.58-6-8-6Z"/>
+          </svg>
+        </button>
+      </header>
+
+      <main class="terminal">
+        <section class="page" id="page-account" data-page="account">
+          <div class="account-header panel">
+            <div>
+              <p class="eyebrow">Account</p>
+              <h1>Private access</h1>
+            </div>
+            <p class="hero-note">Sign in, recover access, and keep wallet points separate from profile settings.</p>
+          </div>
+
+          <div class="account-page-grid">
+            <section class="panel account-stage" id="accountAuthPanel">
+              <div class="account-stage-shell">
+                <div class="account-stage-form">
+                  <div class="account-stage-head">
+                    <p class="eyebrow">Apex Ledger</p>
+                    <h2>Welcome back</h2>
+                    <p class="account-stage-copy">Use your private account to enter race rooms and manage wallet access.</p>
+                  </div>
+
+                  <div class="auth-message" id="authMessage" hidden></div>
+
+                  <div class="auth-tabs" aria-label="Authentication mode">
+                    <button class="auth-tab is-active" id="showLogin" type="button">Log In</button>
+                    <button class="auth-tab" id="showSignup" type="button">Create Account</button>
+                    <button class="auth-tab" id="showReset" type="button">Reset Password</button>
+                  </div>
+
+                  <form class="auth-form is-active" id="loginForm">
+                    <label class="field">
+                      <span>Email</span>
+                      <input id="loginEmail" type="email" autocomplete="email" placeholder="name@example.com">
+                    </label>
+                    <label class="field">
+                      <span>Password</span>
+                      <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter password">
+                    </label>
+                    <button class="primary-button account-submit" type="submit">Enter Account</button>
+                    <button class="link-button" id="triggerVerifyRequest" type="button">Need a new verification email?</button>
+                  </form>
+
+                  <form class="auth-form" id="signupForm">
+                    <label class="field">
+                      <span>Full name</span>
+                      <input id="signupName" type="text" autocomplete="name" placeholder="Your name">
+                    </label>
+                    <label class="field">
+                      <span>Email</span>
+                      <input id="signupEmail" type="email" autocomplete="email" placeholder="name@example.com">
+                    </label>
+                    <label class="field">
+                      <span>Password</span>
+                      <input id="signupPassword" type="password" autocomplete="new-password" placeholder="Create password">
+                    </label>
+                    <button class="primary-button account-submit" type="submit">Create Demo Account</button>
+                  </form>
+
+                  <form class="auth-form" id="resetRequestForm">
+                    <label class="field">
+                      <span>Email</span>
+                      <input id="resetEmail" type="email" autocomplete="email" placeholder="name@example.com">
+                    </label>
+                    <button class="primary-button account-submit" type="submit">Send Reset Link</button>
+                  </form>
+
+                  <form class="auth-form" id="resetConfirmForm">
+                    <label class="field">
+                      <span>New password</span>
+                      <input id="resetPassword" type="password" autocomplete="new-password" placeholder="Create a new password">
+                    </label>
+                    <button class="primary-button account-submit" type="submit">Update Password</button>
+                    <button class="link-button" id="backToLoginLink" type="button">Back to login</button>
+                  </form>
+                </div>
+
+                <div class="account-stage-visual" aria-hidden="true">
+                  <div class="account-stage-badge">Race Book</div>
+                  <div class="account-stage-graphic">
+                    <span class="track track-a"></span>
+                    <span class="track track-b"></span>
+                    <span class="track track-c"></span>
+                    <span class="track track-d"></span>
+                  </div>
+                  <div class="account-stage-meta">
+                    <strong>Apex Access</strong>
+                    <span>Private Formula 1 account sign-in</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <section class="panel account-overview account-summary-panel" id="accountOverview" hidden>
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Profile</p>
+                <h2>Your account</h2>
+              </div>
+            </div>
+            <div class="account-summary-grid">
+              <article class="account-summary-card">
+                <span>Name</span>
+                <strong id="accountPageName">Guest</strong>
+              </article>
+              <article class="account-summary-card">
+                <span>Email</span>
+                <strong id="accountPageEmail">Sign in required</strong>
+              </article>
+              <article class="account-summary-card">
+                <span>Status</span>
+                <strong id="accountPageStatus">Signed out</strong>
+              </article>
+            </div>
+            <div class="account-intro-list account-meta-list">
+              <div class="account-intro-row">
+                <span>Wallet</span>
+                <strong>Points stay in wallet</strong>
+              </div>
+              <div class="account-intro-row">
+                <span>Session</span>
+                <strong>Secure cookie sign-in</strong>
+              </div>
+              <div class="account-intro-row">
+                <span>Recovery</span>
+                <strong>Email verification and reset</strong>
+              </div>
+            </div>
+            <div class="account-actions">
+              <button class="primary-button compact-action" id="accountOpenWallet" type="button">Open Wallet</button>
+              <button class="secondary-button compact-action" id="accountLogout" type="button">Log Out</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-dashboard" data-page="dashboard">
+          <div class="hero-card">
+            <div class="hero-copy">
+              <p class="eyebrow">Formula 1 · Private prediction market</p>
+              <h1>Start here. One race, one ticket, one clear flow.</h1>
+              <p class="hero-note">This version is built to feel simple. First choose a race. Then choose points. Then fill P1 to P10. At the end, review once and reserve the entry.</p>
+              <div class="action-row">
+                <button class="primary-button compact-action" data-go="races" type="button">Choose Race</button>
+                <button class="secondary-button compact-action" data-go="wallet" type="button">Open Wallet</button>
+              </div>
+            </div>
+            <div class="hero-metrics" aria-label="Platform terms">
+              <div>
+                <span>Step 1</span>
+                <strong>Choose a race</strong>
+              </div>
+              <div>
+                <span>Step 2</span>
+                <strong>Choose points and room</strong>
+              </div>
+              <div>
+                <span>Step 3</span>
+                <strong>Fill P1 to P10 and confirm</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-grid">
+            <article class="panel">
+              <p class="eyebrow">Next up</p>
+              <h2 id="dashboardRace">Monaco Grand Prix</h2>
+              <p class="muted-copy" id="dashboardRaceMeta">Circuit de Monaco · 05-07 Jun</p>
+              <button class="secondary-button" data-go="race-detail" type="button">Review Race</button>
+            </article>
+            <article class="panel">
+              <p class="eyebrow">How it works</p>
+              <h2>Follow the path</h2>
+              <div class="step-list">
+                <span>1. Open a race</span>
+                <span>2. Set points on hold</span>
+                <span>3. Complete the top ten</span>
+              </div>
+            </article>
+            <article class="panel">
+              <p class="eyebrow">Available points</p>
+              <h2 id="dashboardBalance">250,000 points</h2>
+              <p class="muted-copy">Use the wallet only when you want to add points or manage cards.</p>
+              <button class="secondary-button" data-go="wallet" type="button">Manage Wallet</button>
+            </article>
+          </div>
+        </section>
+
+        <section class="page" id="page-races" data-page="races">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Step 1</p>
+              <h1>2026 Formula 1 Calendar</h1>
+              <p class="hero-note">Choose the race you want to play. After that, we take you to race details and then into the entry steps.</p>
+            </div>
+          </div>
+          <section class="panel helper-panel">
+            <div class="helper-copy">
+              <p class="eyebrow">What to do</p>
+              <h2>Pick one race to continue</h2>
+              <p class="muted-copy">You do not need to think about points or prediction yet. Just choose the race first.</p>
+            </div>
+          </section>
+          <div class="race-card-grid" id="raceList"></div>
+        </section>
+
+        <section class="page" id="page-race-detail" data-page="race-detail">
+          <div class="panel race-detail-card">
+            <div>
+              <p class="eyebrow" id="selectedRound">Step 2</p>
+              <h1 id="selectedRaceTitle">Monaco Grand Prix</h1>
+              <p class="hero-note" id="selectedRaceMeta">Circuit de Monaco · Monaco · 05-07 Jun</p>
+              <div class="detail-checklist">
+                <span>Check the race</span>
+                <span>Confirm the market is open</span>
+                <span>Then start the entry</span>
+              </div>
+            </div>
+            <div class="selected-grid" id="selectedRaceStats"></div>
+            <div class="action-row">
+              <button class="primary-button compact-action" data-go="entry" type="button">Start Entry</button>
+              <button class="secondary-button compact-action" data-go="races" type="button">Back to Races</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-entry" data-page="entry">
+          <div class="page-head compact-page-head">
+            <div>
+              <p class="eyebrow">Step 3</p>
+              <h1 id="entryRaceTitle">Monaco Grand Prix</h1>
+              <p class="hero-note">This page is now one clean path. First set the points. Next fill P1 to P10. Last, check the summary and reserve the entry.</p>
+              <p class="muted-copy">Each account can reserve only one entry for each race.</p>
+            </div>
+          </div>
+
+          <div class="wizard-rail" aria-label="Entry progress">
+            <span class="wizard-dot is-active" data-step-dot="amount">Step 1 · Points</span>
+            <span class="wizard-dot" data-step-dot="prediction">Step 2 · P1-P10 prediction</span>
+            <span class="wizard-dot" data-step-dot="review">Step 3 · Review entry</span>
+          </div>
+
+          <div class="entry-wizard">
+            <section class="panel wizard-step is-active" data-entry-step="amount" aria-labelledby="entryTitle">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Step 1</p>
+                  <h2 id="entryTitle">Points on Hold</h2>
+                </div>
+                <span class="tier-pill" id="tierName">GoWin</span>
+              </div>
+              <label class="field">
+                <span>Amount</span>
+                <input id="entryInput" type="number" min="10" max="250000" step="10" value="500" inputmode="numeric">
+              </label>
+              <div class="tier-strip" id="tierStrip" aria-label="Entry rooms"></div>
+              <div class="action-row">
+                <button class="primary-button compact-action" id="continueToPrediction" type="button">Continue to P1-P10</button>
+              </div>
+            </section>
+
+            <section class="panel wizard-step" data-entry-step="prediction" aria-labelledby="predictionTitle">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Step 2</p>
+                  <h2 id="predictionTitle">P1-P10 Prediction</h2>
+                </div>
+                <span class="quiet-pill" id="filledCount">0/10</span>
+              </div>
+              <div class="prediction-grid" id="predictionGrid"></div>
+              <div class="action-row">
+                <button class="secondary-button compact-action" id="backToAmount" type="button">Back</button>
+                <button class="secondary-button compact-action" id="clearBoard" type="button">Clear Board</button>
+                <button class="primary-button compact-action" id="continueToReview" type="button">Review Entry</button>
+              </div>
+            </section>
+
+            <section class="panel wizard-step summary-panel" data-entry-step="review" aria-labelledby="summaryTitle">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Step 3</p>
+                  <h2 id="summaryTitle">Entry Review</h2>
+                </div>
+              </div>
+              <dl class="summary-list">
+                <div>
+                  <dt>Race</dt>
+                  <dd id="summaryRace">Monaco Grand Prix</dd>
+                </div>
+                <div>
+                  <dt>Room</dt>
+                  <dd id="summaryTier">GoWin</dd>
+                </div>
+                <div>
+                  <dt>Points held</dt>
+                  <dd id="summaryStake">500</dd>
+                </div>
+                <div>
+                  <dt>Platform fee</dt>
+                  <dd id="summaryFee">75</dd>
+                </div>
+                <div>
+                  <dt>Max return</dt>
+                  <dd id="summaryReturn">2,500</dd>
+                </div>
+              </dl>
+              <div class="action-row">
+                <button class="secondary-button compact-action" id="backToPrediction" type="button">Back</button>
+                <button class="primary-button compact-action" id="reserveEntry" type="button">Reserve Demo Entry</button>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="page" id="page-wallet" data-page="wallet">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Wallet</p>
+              <h1>Points Ledger</h1>
+              <p class="hero-note">Use this page only for money and points. Add a card, buy points, and review wallet activity in one place.</p>
+            </div>
+          </div>
+          <section class="panel helper-panel">
+            <div class="helper-copy">
+              <p class="eyebrow">What to do</p>
+              <h2>Fund first if you need more points</h2>
+              <p class="muted-copy">Start at available balance. If you need more, buy a package. Payment methods and history stay below.</p>
+            </div>
+          </section>
+          <div class="wallet-grid wallet-top-grid">
+            <section class="panel balance-panel">
+              <p class="eyebrow">Available</p>
+              <h2 id="walletPageBalance">250,000 points</h2>
+              <div class="action-row">
+                <button class="secondary-button" id="resetDemo" type="button">Reset Demo</button>
+              </div>
+            </section>
+            <section class="panel funding-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Funding</p>
+                  <h2>Buy points</h2>
+                </div>
+              </div>
+              <div class="wallet-packages" id="walletPackages"></div>
+            </section>
+            <section class="panel methods-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Payment Methods</p>
+                  <h2>Saved cards</h2>
+                </div>
+              </div>
+              <div class="payment-methods-list" id="paymentMethodsList"></div>
+              <form class="payment-method-form" id="paymentMethodForm">
+                <div class="two-up">
+                  <label class="field">
+                    <span>Cardholder</span>
+                    <input id="cardholderName" type="text" autocomplete="cc-name" placeholder="Name on card">
+                  </label>
+                  <label class="field">
+                    <span>Brand</span>
+                    <select id="cardBrand">
+                      <option value="Visa">Visa</option>
+                      <option value="Mastercard">Mastercard</option>
+                      <option value="Amex">Amex</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="three-up">
+                  <label class="field">
+                    <span>Last 4</span>
+                    <input id="cardLast4" type="text" inputmode="numeric" maxlength="4" placeholder="4242">
+                  </label>
+                  <label class="field">
+                    <span>Exp Month</span>
+                    <input id="cardExpMonth" type="number" min="1" max="12" placeholder="04">
+                  </label>
+                  <label class="field">
+                    <span>Exp Year</span>
+                    <input id="cardExpYear" type="number" min="2026" placeholder="2029">
+                  </label>
+                </div>
+                <button class="secondary-button" type="submit">Add Payment Method</button>
+              </form>
+            </section>
+          </div>
+          <div class="wallet-grid wallet-bottom-grid">
+            <section class="panel activity-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Activity</p>
+                  <h2>Wallet history</h2>
+                </div>
+              </div>
+              <div class="wallet-transactions-list" id="walletTransactionsList"></div>
+            </section>
+            <section class="panel entries-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">History</p>
+                  <h2>Reserved Entries</h2>
+                </div>
+              </div>
+              <div class="entries-list" id="entriesList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="page" id="page-rules" data-page="rules">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Rules</p>
+              <h1>How the P1-P10 Market Works</h1>
+              <p class="hero-note">This page explains only the game flow and scoring. Legal and policy details are kept on the Legal page.</p>
+            </div>
+          </div>
+          <div class="rules-layout">
+            <section class="panel">
+              <p class="eyebrow">Rooms</p>
+              <h2>Amount decides access</h2>
+              <div class="tier-strip static-tiers" id="rulesTiers"></div>
+            </section>
+            <section class="panel">
+              <p class="eyebrow">Settlement</p>
+              <h2>Position weights</h2>
+              <div class="weights" id="weights"></div>
+            </section>
+            <section class="panel notice-panel">
+              <strong>Demo prototype.</strong>
+              <span>No official Formula 1 affiliation, no real-money wagering, no payments, and no production compliance layer are included.</span>
+            </section>
+          </div>
+        </section>
+
+        <section class="page" id="page-legal" data-page="legal">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Legal</p>
+              <h1>Policies and Compliance</h1>
+              <p class="hero-note">One place for eligibility, cancellation, privacy, cookies, and demo-use terms.</p>
+            </div>
+          </div>
+          <div class="rules-layout legal-layout">
+            <section class="panel">
+              <p class="eyebrow">Eligibility</p>
+              <h2>Account use requirements</h2>
+              <div class="legal-list">
+                <div><strong>18+</strong><span>User must be 18 or older.</span></div>
+                <div><strong>One account</strong><span>One person, one verified account, one wallet.</span></div>
+                <div><strong>ID review</strong><span>Date of birth and identity checks may be required.</span></div>
+              </div>
+            </section>
+            <section class="panel">
+              <p class="eyebrow">Wallet</p>
+              <h2>Points and cancellation</h2>
+              <div class="legal-list">
+                <div><strong>Points only</strong><span>Wallet holds platform points used for entries.</span></div>
+                <div><strong>Race lock</strong><span>Entries should close before race start.</span></div>
+                <div><strong>Cancellation</strong><span>Cancelled races can return points under platform policy.</span></div>
+              </div>
+            </section>
+            <section class="panel">
+              <p class="eyebrow">Privacy</p>
+              <h2>Consent and data use</h2>
+              <div class="legal-list">
+                <div><strong>Cookies</strong><span>Session cookies keep users signed in securely.</span></div>
+                <div><strong>Account data</strong><span>Email, profile, and wallet activity are stored for account operations.</span></div>
+                <div><strong>Security</strong><span>Password resets and verification flows help protect access.</span></div>
+              </div>
+            </section>
+            <section class="panel notice-panel">
+              <strong>Current prototype status.</strong>
+              <span>This interface is still a demo product surface. Real-money gaming, tax handling, KYC, geofencing, and full regulated policy workflows are not yet implemented.</span>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <span>Race and driver data entered from Formula1.com references checked May 28, 2026.</span>
+        <span>Photo by Jonathan Borba on Pexels.</span>
+      </footer>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
