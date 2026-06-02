@@ -954,17 +954,24 @@ export async function ensureSchemaReady() {
 export { apiApp };
 
 if (process.env.NETLIFY !== "true") {
-  const app = express();
-  app.use("/api", apiApp);
-  app.use(express.static(__dirname));
+  async function startLocalServer() {
+    const app = express();
+    app.use("/api", apiApp);
+    app.use(express.static(__dirname));
 
-  app.get("*", (_req, res) => {
-    res.sendFile(path.join(__dirname, "index.html"));
-  });
+    app.get("*", (_req, res) => {
+      res.sendFile(path.join(__dirname, "index.html"));
+    });
 
-  await ensureSchemaReady();
+    await ensureSchemaReady();
 
-  app.listen(PORT, () => {
-    console.log(`Apex Ledger backend running on http://localhost:${PORT}`);
+    app.listen(PORT, () => {
+      console.log(`Apex Ledger backend running on http://localhost:${PORT}`);
+    });
+  }
+
+  startLocalServer().catch((error) => {
+    console.error("Failed to start Apex Ledger:", error);
+    process.exit(1);
   });
 }
