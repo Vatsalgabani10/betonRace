@@ -5,6 +5,7 @@ Private Formula 1 P1-P10 prediction app with:
 - multi-page frontend flow
 - login / signup screen
 - Node + Express backend
+- Netlify Functions-compatible API entry
 - Turso / libSQL-ready auth, sessions, and entries API
 - database-backed user balance and reserved entries
 - email verification and password reset flows
@@ -41,6 +42,31 @@ npm run dev
 ```
 
 Then open `http://localhost:4173`.
+
+## Netlify deploy
+
+This repo now supports Netlify by routing the Express API through a Netlify Function:
+
+- Netlify function entry: `netlify/functions/api.js`
+- Netlify config: `netlify.toml`
+
+Set these environment variables in Netlify:
+
+- `TURSO_DATABASE_URL`
+- `TURSO_AUTH_TOKEN`
+- `SESSION_SECRET`
+- `APP_ORIGIN`
+- `SMTP_HOST`
+- `SMTP_PORT`
+- `SMTP_USER`
+- `SMTP_PASS`
+- `SMTP_FROM`
+
+Recommended `APP_ORIGIN` value in production:
+
+```bash
+APP_ORIGIN=https://your-site-name.netlify.app
+```
 
 ## What is real now
 

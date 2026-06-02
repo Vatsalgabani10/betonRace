@@ -68,8 +68,8 @@ const mailer =
       })
     : null;
 
-const app = express();
-app.use(express.json({ limit: "1mb" }));
+const apiApp = express();
+apiApp.use(express.json({ limit: "1mb" }));
 
 function parseCookies(header = "") {
   return Object.fromEntries(
@@ -501,7 +501,7 @@ function resetLink(token) {
   return `${APP_ORIGIN}/?reset=${encodeURIComponent(token)}#account`;
 }
 
-app.get("/api/auth/session", async (req, res) => {
+apiApp.get("/auth/session", async (req, res) => {
   const user = await authFromRequest(req);
   if (!user) {
     res.json({ user: null });
@@ -511,7 +511,7 @@ app.get("/api/auth/session", async (req, res) => {
   res.json({ user: await buildUserPayload(user) });
 });
 
-app.post("/api/auth/signup", async (req, res) => {
+apiApp.post("/auth/signup", async (req, res) => {
   const name = String(req.body.name || "").trim();
   const email = String(req.body.email || "").trim().toLowerCase();
   const password = String(req.body.password || "");
@@ -567,7 +567,7 @@ app.post("/api/auth/signup", async (req, res) => {
   });
 });
 
-app.post("/api/auth/login", async (req, res) => {
+apiApp.post("/auth/login", async (req, res) => {
   const email = String(req.body.email || "").trim().toLowerCase();
   const password = String(req.body.password || "");
   const row = await getUserByEmail(email);
@@ -592,7 +592,7 @@ app.post("/api/auth/login", async (req, res) => {
   res.json({ user: await buildUserPayload(row) });
 });
 
-app.post("/api/auth/logout", async (req, res) => {
+apiApp.post("/auth/logout", async (req, res) => {
   const cookies = parseCookies(req.headers.cookie);
   const token = cookies[SESSION_COOKIE];
 
@@ -607,7 +607,7 @@ app.post("/api/auth/logout", async (req, res) => {
   res.json({ ok: true });
 });
 
-app.post("/api/auth/verify-email/request", async (req, res) => {
+apiApp.post("/auth/verify-email/request", async (req, res) => {
   const email = String(req.body.email || "").trim().toLowerCase();
   const row = await getUserByEmail(email);
 
@@ -638,7 +638,7 @@ app.post("/api/auth/verify-email/request", async (req, res) => {
   });
 });
 
-app.post("/api/auth/verify-email/confirm", async (req, res) => {
+apiApp.post("/auth/verify-email/confirm", async (req, res) => {
   const token = String(req.body.token || "").trim();
   if (!token) {
     res.status(400).json({ error: "Verification token is required." });
@@ -671,7 +671,7 @@ app.post("/api/auth/verify-email/confirm", async (req, res) => {
   res.json({ user: await buildUserPayload(row) });
 });
 
-app.post("/api/auth/password-reset/request", async (req, res) => {
+apiApp.post("/auth/password-reset/request", async (req, res) => {
   const email = String(req.body.email || "").trim().toLowerCase();
   const row = await getUserByEmail(email);
 
@@ -697,7 +697,7 @@ app.post("/api/auth/password-reset/request", async (req, res) => {
   });
 });
 
-app.post("/api/auth/password-reset/confirm", async (req, res) => {
+apiApp.post("/auth/password-reset/confirm", async (req, res) => {
   const token = String(req.body.token || "").trim();
   const password = String(req.body.password || "");
 
@@ -725,7 +725,7 @@ app.post("/api/auth/password-reset/confirm", async (req, res) => {
   res.json({ ok: true, message: "Password updated. You can log in now." });
 });
 
-app.post("/api/entries", requireAuth, async (req, res) => {
+apiApp.post("/entries", requireAuth, async (req, res) => {
   const race = String(req.body.race || "").trim();
   const tier = String(req.body.tier || "").trim();
   const amount = Number(req.body.amount || 0);
@@ -791,7 +791,7 @@ app.post("/api/entries", requireAuth, async (req, res) => {
   res.status(201).json({ user: await buildUserPayload(req.user.id) });
 });
 
-app.post("/api/wallet/reset", requireAuth, async (req, res) => {
+apiApp.post("/wallet/reset", requireAuth, async (req, res) => {
   await db.execute({
     sql: "UPDATE users SET balance = ? WHERE id = ?",
     args: [STARTING_BALANCE, req.user.id],
@@ -814,7 +814,7 @@ app.post("/api/wallet/reset", requireAuth, async (req, res) => {
   res.json({ user: await buildUserPayload(req.user.id) });
 });
 
-app.post("/api/wallet/payment-methods", requireAuth, async (req, res) => {
+apiApp.post("/wallet/payment-methods", requireAuth, async (req, res) => {
   const cardholder = String(req.body.cardholder || "").trim();
   const brand = String(req.body.brand || "").trim();
   const last4 = String(req.body.last4 || "").trim();
@@ -845,7 +845,7 @@ app.post("/api/wallet/payment-methods", requireAuth, async (req, res) => {
   res.status(201).json({ user: await buildUserPayload(req.user.id) });
 });
 
-app.post("/api/wallet/payment-methods/:id/default", requireAuth, async (req, res) => {
+apiApp.post("/wallet/payment-methods/:id/default", requireAuth, async (req, res) => {
   const methodId = String(req.params.id || "").trim();
   const result = await db.execute({
     sql: "SELECT id FROM payment_methods WHERE id = ? AND user_id = ? LIMIT 1",
@@ -869,7 +869,7 @@ app.post("/api/wallet/payment-methods/:id/default", requireAuth, async (req, res
   res.json({ user: await buildUserPayload(req.user.id) });
 });
 
-app.delete("/api/wallet/payment-methods/:id", requireAuth, async (req, res) => {
+apiApp.delete("/wallet/payment-methods/:id", requireAuth, async (req, res) => {
   const methodId = String(req.params.id || "").trim();
   const result = await db.execute({
     sql: "SELECT id, is_default FROM payment_methods WHERE id = ? AND user_id = ? LIMIT 1",
@@ -903,7 +903,7 @@ app.delete("/api/wallet/payment-methods/:id", requireAuth, async (req, res) => {
   res.json({ user: await buildUserPayload(req.user.id) });
 });
 
-app.post("/api/wallet/top-up", requireAuth, async (req, res) => {
+apiApp.post("/wallet/top-up", requireAuth, async (req, res) => {
   const points = Number(req.body.points || 0);
   const usdAmount = Number(req.body.usdAmount || 0);
   const paymentMethodId = String(req.body.paymentMethodId || "").trim();
@@ -941,14 +941,30 @@ app.post("/api/wallet/top-up", requireAuth, async (req, res) => {
   res.json({ user: await buildUserPayload(req.user.id) });
 });
 
-app.use(express.static(__dirname));
+let schemaReadyPromise;
 
-app.get("*", (_req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
+export async function ensureSchemaReady() {
+  if (!schemaReadyPromise) {
+    schemaReadyPromise = ensureSchema();
+  }
 
-await ensureSchema();
+  await schemaReadyPromise;
+}
 
-app.listen(PORT, () => {
-  console.log(`Apex Ledger backend running on http://localhost:${PORT}`);
-});
+export { apiApp };
+
+if (process.env.NETLIFY !== "true") {
+  const app = express();
+  app.use("/api", apiApp);
+  app.use(express.static(__dirname));
+
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+  });
+
+  await ensureSchemaReady();
+
+  app.listen(PORT, () => {
+    console.log(`Apex Ledger backend running on http://localhost:${PORT}`);
+  });
+}
